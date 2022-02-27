@@ -1,10 +1,32 @@
-import Head from "next/head";
+import { useState, useEffect } from "react";
 import Seo from "./Seo";
+
+const API_KEY = "25695d3ad1911085af6aad954e05bc2f";
+
 export default function Home() {
+  const [movies, setMovies] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const { results } = await (
+        await fetch(
+          `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-US&page=1`
+        )
+      ).json();
+      setMovies(results);
+    })();
+  }, []);
+
   return (
     <div>
       <Seo title="Home" />
-      <h1>hi</h1>
+
+      {!movies && <h4>Loading...</h4>}
+      {movies?.map((movie) => (
+        <div key={movie.id}>
+          <h4>{movie.original_title}</h4>
+        </div>
+      ))}
     </div>
   );
 }
